@@ -63,11 +63,16 @@ fun DrawScope.drawScene(ctx: RenderCtx) {
     }
 }
 
+/** Frame of an item in canvas units; text height comes from its measured layout. */
+fun Project.frameOf(item: Item, extras: RenderExtras?): Rect {
+    val r = rectOf(item)
+    return if (item.type == ItemType.TEXT && extras != null) r.copy(bottom = r.top + extras.textHeight(item)) else r
+}
+
 fun DrawScope.drawItem(ctx: RenderCtx, item: Item) {
     val p = ctx.project
-    val r = p.rectOf(item)
-    if (r.width <= 0f || r.height <= 0f) return
-    val rect = if (item.type == ItemType.TEXT) r.copy(bottom = r.top + (ctx.extras?.textHeight(item) ?: r.height)) else r
+    val rect = p.frameOf(item, ctx.extras)
+    if (rect.width <= 0f || rect.height <= 0f) return
     withTransform({
         if (item.rotation != 0f) rotate(item.rotation, rect.center)
         if (item.flipH && item.type != ItemType.TEXT) scale(-1f, 1f, rect.center)
