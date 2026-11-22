@@ -86,7 +86,7 @@ class TextEngine(context: Context) : TextRenderer {
         )
         val text = (if (item.text.isEmpty()) " " else item.text).let { if (item.caps) it.uppercase() else it }
         val w = item.w.toInt().coerceAtLeast(40)
-        val r = measurer.measure(text, style, constraints = Constraints(minWidth = w, maxWidth = w))
+        val r = synchronized(measurer) { measurer.measure(text, style, constraints = Constraints(minWidth = w, maxWidth = w)) }
         synchronized(cache) { cache[key] = r }
         return r
     }
