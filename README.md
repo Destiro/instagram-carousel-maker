@@ -43,7 +43,7 @@ First launch: tap **New carousel**, choose a format, and pick your photos.
 
 ### Or download it from GitHub
 
-Every push to `main` builds the app. Open the repository on GitHub, then **Actions > Build APK > latest run > Artifacts > CarouselMaker-debug-apk**, download on the phone, unzip and install as above.
+Every push to `main` builds the app. Open the repository on GitHub, then **Actions > Build APK > latest run > Artifacts > CarouselMaker-apk**, download on the phone, unzip and install as above.
 
 ## Build it yourself
 
