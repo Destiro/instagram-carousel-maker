@@ -37,7 +37,13 @@ class EditorViewModel(val projectId: String) : ViewModel() {
 
     private var density = 3f
 
+    companion object {
+        /** Most recently opened editor; lets instrumented tests inspect state. */
+        @Volatile var current: EditorViewModel? = null
+    }
+
     init {
+        current = this
         viewModelScope.launch {
             project = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { AppGraph.repo.load(projectId) }
             if (viewport.width > 0) onViewport(viewport, density)
@@ -160,6 +166,7 @@ class EditorViewModel(val projectId: String) : ViewModel() {
 
     override fun onCleared() {
         saveNow()
+        if (current === this) current = null
     }
 
     // ---------- item helpers ----------

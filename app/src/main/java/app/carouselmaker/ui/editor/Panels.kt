@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -117,7 +118,7 @@ fun LayoutsPanel(vm: EditorViewModel, onDone: () -> Unit) {
         ) {
             items(templates, key = { it.id }) { t ->
                 val selected = currentBlock?.templateId == t.id && currentBlock.span == span
-                TemplateThumb(t, project.ratio, selected, Modifier.clickable { apply(t.id) })
+                TemplateThumb(t, project.ratio, selected, Modifier.testTag("template_${t.id}").clickable { apply(t.id) })
             }
         }
         Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -213,7 +214,7 @@ fun SpacingPanel(vm: EditorViewModel, onDone: () -> Unit) {
                 ) {
                     items(BG_COLORS) { c ->
                         Box(
-                            Modifier.aspectRatio(1f).clip(CircleShape).background(Color(c))
+                            Modifier.testTag("bg_$c").aspectRatio(1f).clip(CircleShape).background(Color(c))
                                 .border(if (c == active) 3.dp else 1.dp, if (c == active) Palette.Accent else Color(0x33FFFFFF), CircleShape)
                                 .clickable {
                                     vm.commit { p ->
