@@ -180,6 +180,12 @@ class EditorViewModel(val projectId: String) : ViewModel() {
         if (select) selectedId = item.id
     }
 
+    /** Add [proto] centred in the current view and select it. */
+    fun addAtCenter(proto: Item) {
+        val c = toCanvas(Offset(viewport.width / 2, viewport.height / 2))
+        addItem(proto.copy(x = c.x - proto.w / 2, y = c.y - proto.h / 2))
+    }
+
     fun deleteSelected() {
         val id = selectedId ?: return
         val it = item(id) ?: return

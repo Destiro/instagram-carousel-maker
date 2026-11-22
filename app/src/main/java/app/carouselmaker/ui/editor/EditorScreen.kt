@@ -33,7 +33,13 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.Opacity
+import androidx.compose.material.icons.filled.Palette as PaletteIcon
+import androidx.compose.material.icons.filled.CropSquare
+import androidx.compose.material.icons.filled.FilterNone
+import androidx.compose.material.icons.filled.Style
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Flip
@@ -208,6 +214,7 @@ private fun MainBar(onMedia: () -> Unit, onPanel: (Panel) -> Unit) {
         ToolButton(Icons.Filled.AddPhotoAlternate, "Media", onClick = onMedia)
         ToolButton(Icons.Filled.GridView, "Layout") { onPanel(Panel.LAYOUTS) }
         ToolButton(Icons.Filled.Tune, "Spacing") { onPanel(Panel.SPACING) }
+        ToolButton(Icons.Filled.EmojiEmotions, "Stickers") { onPanel(Panel.STICKERS) }
     }
 }
 
@@ -246,6 +253,27 @@ private fun ItemBar(vm: EditorViewModel, item: Item, onCrop: () -> Unit, onRepla
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
             if (item.type == ItemType.PHOTO && item.media != null) ToolButton(Icons.Filled.Crop, "Crop", onClick = onCrop)
             if (item.type == ItemType.PHOTO || item.type == ItemType.VIDEO) ToolButton(Icons.Filled.SwapHoriz, "Replace", onClick = onReplace)
+            if (item.type == ItemType.STICKER) {
+                ToolButton(Icons.Filled.CropSquare, "Outline", tint = if (item.outline) Palette.Accent else Color(0xFFD4D4D8)) { vm.mutate(item.id) { it.copy(outline = !it.outline) } }
+                ToolButton(Icons.Filled.FilterNone, "Shadow", tint = if (item.shadow) Palette.Accent else Color(0xFFD4D4D8)) { vm.mutate(item.id) { it.copy(shadow = !it.shadow) } }
+                ToolButton(Icons.Filled.PaletteIcon, "Tint", tint = item.tint?.let { Color(it) } ?: Color(0xFFD4D4D8)) {
+                    val i = TINTS.indexOf(item.tint)
+                    vm.mutate(item.id) { it.copy(tint = TINTS[(i + 1) % TINTS.size]) }
+                }
+            }
+            if (item.type == ItemType.TAPE) {
+                ToolButton(Icons.Filled.Style, "Style") {
+                    val ids = app.carouselmaker.render.TapeStyles.all.map { it.id }
+                    val i = ids.indexOf(item.style)
+                    vm.mutate(item.id) { it.copy(style = ids[(i + 1) % ids.size]) }
+                }
+            }
+            if (item.type == ItemType.STICKER || item.type == ItemType.TAPE || item.type == ItemType.PAPER) {
+                ToolButton(Icons.Filled.Opacity, "Opacity " + (item.opacity * 100).toInt() + "%") {
+                    val next = when { item.opacity > 0.9f -> 0.75f; item.opacity > 0.7f -> 0.5f; item.opacity > 0.45f -> 0.25f; else -> 1f }
+                    vm.mutate(item.id) { it.copy(opacity = next) }
+                }
+            }
             ToolButton(Icons.Filled.Flip, "Flip") { vm.flipSelected() }
             ToolButton(Icons.Filled.Layers, "Front") { vm.bringToFront() }
             ToolButton(Icons.Filled.Layers, "Back") { vm.sendToBack() }
@@ -260,6 +288,9 @@ private fun PanelHost(vm: EditorViewModel, panel: Panel, onClose: () -> Unit) {
     when (panel) {
         Panel.LAYOUTS -> LayoutsPanel(vm, onClose)
         Panel.SPACING -> SpacingPanel(vm, onClose)
+        Panel.STICKERS -> StickerPanel(vm, onClose)
         else -> onClose()
     }
 }
+
+private val TINTS: List<Int?> = listOf(null, 0xFF141414.toInt(), 0xFFFFFFFF.toInt(), 0xFFD9483B.toInt(), 0xFF3F6FA8.toInt(), 0xFF4F7A57.toInt(), 0xFFF5C451.toInt())

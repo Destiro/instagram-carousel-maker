@@ -1,7 +1,10 @@
 package app.carouselmaker.data
 
 import android.app.Application
+import app.carouselmaker.render.AppExtras
 import app.carouselmaker.render.ImageStore
+import app.carouselmaker.render.StickerBitmaps
+import app.carouselmaker.render.StickerLibrary
 
 object AppGraph {
     lateinit var app: Application
@@ -10,13 +13,14 @@ object AppGraph {
     lateinit var images: ImageStore
 
     /** Sticker/text drawing hooks, set once those features are initialised. */
-    var extras: app.carouselmaker.render.RenderExtras? = null
+    var extras: AppExtras? = null
 
     fun init(application: Application) {
         app = application
         repo = ProjectRepository(application)
         importer = MediaImporter(application, repo)
         images = ImageStore(repo)
+        extras = AppExtras(StickerBitmaps(StickerLibrary(application)))
     }
 }
 
