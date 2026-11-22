@@ -90,6 +90,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
     var replacing by remember { mutableStateOf<String?>(null) }
     var panel by remember { mutableStateOf(Panel.NONE) }
     var cropping by remember { mutableStateOf<String?>(null) }
+    var trimming by remember { mutableStateOf<String?>(null) }
 
     val addPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(40)) { uris ->
         if (uris.isNotEmpty()) scope.launch {
@@ -125,6 +126,11 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
         CropOverlay(vm, cropId) { cropping = null }
         return
     }
+    val trimId = trimming
+    if (trimId != null) {
+        VideoOverlay(vm, trimId) { trimming = null }
+        return
+    }
     Column(Modifier.fillMaxSize().background(Palette.Bg).systemBarsPadding()) {
         TopBar(vm, onBack) { vm.saveNow(); onExport(projectId) }
         Box(Modifier.weight(1f).fillMaxWidth().background(Palette.Bg2)) {
@@ -150,6 +156,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
                     onEditText = { panel = Panel.TEXT },
                     onEdges = { panel = Panel.EDGES },
                     onCrop = { cropping = sel.id },
+                    onTrim = { trimming = sel.id },
                     onReplace = {
                         replacing = sel.id
                         onePicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
@@ -241,7 +248,7 @@ fun ToolButton(icon: ImageVector, label: String, tint: Color = Color(0xFFD4D4D8)
 }
 
 @Composable
-private fun ItemBar(vm: EditorViewModel, item: Item, onEditText: () -> Unit, onEdges: () -> Unit, onCrop: () -> Unit, onReplace: () -> Unit) {
+private fun ItemBar(vm: EditorViewModel, item: Item, onEditText: () -> Unit, onEdges: () -> Unit, onCrop: () -> Unit, onTrim: () -> Unit, onReplace: () -> Unit) {
     val title = when (item.type) {
         ItemType.PHOTO -> if (item.media == null) "Empty cell" else "Photo"
         ItemType.VIDEO -> "Video"
@@ -263,6 +270,7 @@ private fun ItemBar(vm: EditorViewModel, item: Item, onEditText: () -> Unit, onE
         }
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
             if ((item.type == ItemType.PHOTO || item.type == ItemType.VIDEO) && item.media != null) ToolButton(Icons.Filled.AutoFixHigh, "Edges", onClick = onEdges)
+            if (item.type == ItemType.VIDEO && item.media != null) ToolButton(Icons.Filled.ContentCut, "Trim", onClick = onTrim)
             if (item.type == ItemType.PHOTO && item.media != null) ToolButton(Icons.Filled.Crop, "Crop", onClick = onCrop)
             if (item.type == ItemType.PHOTO || item.type == ItemType.VIDEO) ToolButton(Icons.Filled.SwapHoriz, "Replace", onClick = onReplace)
             if (item.type == ItemType.TEXT) ToolButton(Icons.Filled.Edit, "Edit", onClick = onEditText)
