@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.carouselmaker.ui.editor.EditorScreen
+import app.carouselmaker.ui.export.ExportScreen
 import app.carouselmaker.ui.home.HomeScreen
 import app.carouselmaker.ui.home.NewCarouselScreen
 import app.carouselmaker.ui.theme.CarouselTheme
@@ -37,7 +38,15 @@ private fun AppNav() {
             )
         }
         composable("editor/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) {
-            EditorScreen(it.arguments!!.getString("id")!!, onBack = { nav.popBackStack() })
+            val id = it.arguments!!.getString("id")!!
+            EditorScreen(id, onBack = { nav.popBackStack() }, onExport = { pid -> nav.navigate("export/$pid") })
+        }
+        composable("export/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) {
+            ExportScreen(
+                it.arguments!!.getString("id")!!,
+                onBack = { nav.popBackStack() },
+                onHome = { nav.popBackStack("home", false) },
+            )
         }
     }
 }
