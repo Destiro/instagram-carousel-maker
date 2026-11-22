@@ -46,6 +46,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -131,7 +132,7 @@ fun StickerPanel(vm: EditorViewModel, onDone: () -> Unit) {
                     items(stickers, key = { it.second.id }) { (_, s) ->
                         val img = extras.stickers.get(s.id, project.look, 200)
                         Box(
-                            Modifier.aspectRatio(1f).clip(RoundedCornerShape(14.dp)).background(Palette.Paper)
+                            Modifier.testTag("sticker_${s.id}").aspectRatio(1f).clip(RoundedCornerShape(14.dp)).background(Palette.Paper)
                                 .clickable {
                                     vm.addAtCenter(Item(id = newId(), type = ItemType.STICKER, stickerId = s.id, w = 320f, h = 320f))
                                     onDone()
@@ -149,7 +150,7 @@ fun StickerPanel(vm: EditorViewModel, onDone: () -> Unit) {
             ) {
                 items(TapeStyles.all, key = { it.id }) { t ->
                     Box(
-                        Modifier.height(64.dp).clip(RoundedCornerShape(14.dp)).background(Color(0xFF3A3A42)).clickable {
+                        Modifier.testTag("tape_${t.id}").height(64.dp).clip(RoundedCornerShape(14.dp)).background(Color(0xFF3A3A42)).clickable {
                             vm.addAtCenter(Item(id = newId(), type = ItemType.TAPE, style = t.id, w = 380f, h = 90f, rotation = -4f))
                             onDone()
                         },
@@ -165,7 +166,7 @@ fun StickerPanel(vm: EditorViewModel, onDone: () -> Unit) {
             ) {
                 items(PaperKinds.all, key = { it.id }) { k ->
                     Box(
-                        Modifier.height(96.dp).clip(RoundedCornerShape(14.dp)).background(Color(0xFF3A3A42)).clickable {
+                        Modifier.testTag("paper_${k.id}").height(96.dp).clip(RoundedCornerShape(14.dp)).background(Color(0xFF3A3A42)).clickable {
                             val (w, h) = paperSize(k.id)
                             vm.addAtCenter(Item(id = newId(), type = ItemType.PAPER, style = k.id, w = w, h = h, rotation = 2f))
                             onDone()

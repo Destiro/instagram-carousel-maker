@@ -26,6 +26,7 @@ import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -156,6 +157,7 @@ fun EditorCanvas(
     Canvas(
         modifier
             .fillMaxSize()
+            .testTag("editor_canvas")
             .onSizeChanged { vm.onViewport(Size(it.width.toFloat(), it.height.toFloat()), density) }
             .pointerInput(Unit) {
                 val slop = viewConfiguration.touchSlop
@@ -170,9 +172,11 @@ fun EditorCanvas(
                     val sel0 = vm.item(vm.selectedId)
                     if (sel0 != null) {
                         val fr = p0.frameOf(sel0, extras)
+                        // nearest handle wins, so side handles stay reachable on short items
+                        var best = handleR
                         for (hk in handlesFor(sel0)) {
-                            val sp = handleScreenPos(vm, sel0, fr, hk, density)
-                            if ((sp - down.position).getDistance() <= handleR) { handle = hk; break }
+                            val d = (handleScreenPos(vm, sel0, fr, hk, density) - down.position).getDistance()
+                            if (d <= best) { best = d; handle = hk }
                         }
                     }
                     val hit = if (handle == null) hitItem(p0, vm.toCanvas(down.position)) else null
@@ -320,14 +324,13 @@ fun EditorCanvas(
                 else drawLine(Palette.Snap, Offset(-20f / sc, g.pos), Offset(p.canvasW + 20f / sc, g.pos), strokeWidth = 1.5f * density / sc)
             }
         }
-        // slide numbers above the canvas
+        // slide numbers above the canvas (measured explicitly so off-screen labels cannot break constraints)
+        val numStyle = TextStyle(color = Palette.TextDim, fontSize = 12.sp)
         for (i in 0 until p.slideCount) {
             val pos = vm.toScreen(Offset(i * SLIDE_W, 0f))
-            drawText(
-                measurer, "${i + 1}",
-                Offset(pos.x + 2f * density, pos.y - 20f * density),
-                style = TextStyle(color = Palette.TextDim, fontSize = 12.sp),
-            )
+            if (pos.x < -SLIDE_W * sc || pos.x > size.width) continue
+            val layout = measurer.measure("${i + 1}", numStyle)
+            drawText(layout, topLeft = Offset(pos.x + 2f * density, pos.y - 20f * density))
         }
         drawSelection(vm, p, measurer, density)
     }

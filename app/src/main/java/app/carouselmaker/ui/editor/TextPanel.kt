@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -107,7 +109,7 @@ fun TextPanel(vm: EditorViewModel, onDone: () -> Unit) {
                         }
                     }
                 }
-                1 -> Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                1 -> Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     LabeledSlider("Size", item.fontSize, 24f, 400f, { v -> edit { it.copy(fontSize = v) } }) {}
                     LabeledSlider("Letter spacing", item.spacing, -5f, 30f, { v -> edit { it.copy(spacing = v) } }) {}
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -131,7 +133,7 @@ fun TextPanel(vm: EditorViewModel, onDone: () -> Unit) {
                 ) {
                     gridItems(TEXT_COLORS) { c ->
                         Box(
-                            Modifier.aspectRatio(1f).clip(CircleShape).background(Color(c))
+                            Modifier.testTag("tcolor_$c").aspectRatio(1f).clip(CircleShape).background(Color(c))
                                 .border(if (c == item.color) 3.dp else 1.dp, if (c == item.color) Palette.Accent else Color(0x33FFFFFF), CircleShape)
                                 .clickable { edit { it.copy(color = c) } },
                         )

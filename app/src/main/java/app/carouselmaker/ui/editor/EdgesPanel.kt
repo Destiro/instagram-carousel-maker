@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -75,15 +77,15 @@ fun EdgesPanel(vm: EditorViewModel, startTab: Int, onDone: () -> Unit) {
         if (tab == 0) {
             if (!photo || id == null || item == null) {
                 Text("Tap a photo on the canvas first, then choose how its edge looks.", Modifier.padding(top = 24.dp), color = Palette.TextDim, fontSize = 14.sp)
-            } else EdgeControls(vm, id, item.edge)
-        } else SeamControls(vm)
+            } else EdgeControls(vm, id, item.edge, Modifier.weight(1f))
+        } else SeamControls(vm, Modifier.weight(1f))
     }
 }
 
 @Composable
-private fun EdgeControls(vm: EditorViewModel, id: String, edge: Edge) {
+private fun EdgeControls(vm: EditorViewModel, id: String, edge: Edge, modifier: Modifier = Modifier) {
     fun edit(f: (Edge) -> Edge) = vm.liveItem(id) { it.copy(edge = f(it.edge)) }
-    Column(Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    Column(modifier.verticalScroll(rememberScrollState()).padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         for (row in EDGE_TYPES.chunked(3)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for ((type, label) in row) {
@@ -148,7 +150,7 @@ private fun EdgeSample(type: EdgeType) {
 }
 
 @Composable
-private fun SeamControls(vm: EditorViewModel) {
+private fun SeamControls(vm: EditorViewModel, modifier: Modifier = Modifier) {
     val p = vm.project ?: return
     if (p.slideCount < 2) {
         Text("Add a second slide to decorate the cut between slides.", Modifier.padding(top = 24.dp), color = Palette.TextDim, fontSize = 14.sp)
@@ -158,7 +160,7 @@ private fun SeamControls(vm: EditorViewModel) {
     var all by remember { mutableStateOf(false) }
     val active = p.seamKind(seam)
     LaunchedEffect(seam) { vm.scrollToSlide(seam) }
-    Column(Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    Column(modifier.verticalScroll(rememberScrollState()).padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             IconBtn(Icons.Filled.ChevronLeft, "Previous seam", { seam = (seam - 1).coerceAtLeast(0) }, enabled = seam > 0)
             Text(
