@@ -46,6 +46,7 @@ class RenderCtx(
 interface RenderExtras {
     fun DrawScope.drawSticker(ctx: RenderCtx, item: Item, rect: Rect)
     fun DrawScope.drawText(ctx: RenderCtx, item: Item, rect: Rect)
+    fun DrawScope.drawDecor(ctx: RenderCtx, item: Item, rect: Rect)
     fun textHeight(item: Item): Float
 }
 
@@ -81,7 +82,7 @@ fun DrawScope.drawItem(ctx: RenderCtx, item: Item) {
             ItemType.PHOTO, ItemType.VIDEO -> drawMedia(ctx, item, rect)
             ItemType.STICKER -> ctx.extras?.run { drawSticker(ctx, item, rect) }
             ItemType.TEXT -> ctx.extras?.run { drawText(ctx, item, rect) }
-            ItemType.TAPE, ItemType.PAPER -> Unit
+            ItemType.TAPE, ItemType.PAPER -> ctx.extras?.run { drawDecor(ctx, item, rect) }
         }
     }
 }

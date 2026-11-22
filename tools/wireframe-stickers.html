@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sticker gallery – hand-sketched packs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Caveat:wght@600;700&amp;family=Permanent+Marker&amp;family=Special+Elite&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0F11}
+a{color:#F4F4F5;text-decoration:none}a:hover{color:#FFFFFF}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer}
+.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;display:block}
+.tile{height:76px;border-radius:14px;background:#F5F3EE;display:flex;align-items:center;justify-content:center}
+.sk{width:56px;height:56px;overflow:visible}
+.sk .ink{fill:none;stroke:#2A2622;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sk .wash{opacity:.85}
+.look-ink .sk .wash{display:none}
+.look-pencil .sk .ink{stroke:#6A655E;stroke-width:1.2}
+.look-pencil .sk .wash{opacity:.35}
+.sk .fine{fill:none;stroke:#2A2622;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.look-pencil .sk .fine{stroke:#6A655E;stroke-width:.7}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile3{height:116px;border-radius:14px;background:#F5F3EE;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tile3 .sk{width:78px;height:78px}
+.cap{font-family:Caveat,cursive;font-weight:700;font-size:17px;line-height:1;color:#2A2622}
+.sec{margin:0;display:flex;align-items:baseline;justify-content:space-between}
+.sec span:first-child{font-size:12px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:.06em}
+.sec span:last-child{font-size:12px;color:#A1A1AA}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.chip{flex-shrink:0;height:32px;padding:0 12px;border-radius:16px;background:#26262D;font-size:13px;font-weight:500;color:#D4D4D8;display:flex;align-items:center}
+.word{height:56px;border-radius:14px;background:#F5F3EE;color:#2A2622;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1}
+</style>
+</helmet>
+<div style="width: 360px; height: 2400px; box-sizing: border-box; background: #1A1A1F; color: #F4F4F5; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 14px; overflow: hidden; position: relative; padding: 8px 16px 24px">
+<svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <filter id="wash" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/><feGaussianBlur in="d" stdDeviation="0.4"/></filter>
+  </defs>
+</svg>
+
+  <div aria-hidden="true" style="align-self: center; width: 36px; height: 4px; border-radius: 2px; background: #3F3F46"></div>
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 600">Add to canvas</h1>
+    <a href="Editor.dc.html" style="height: 44px; padding: 0 4px 0 12px; display: flex; align-items: center; font-size: 15px; font-weight: 700; color: {{accent}}">Close</a>
+  </div>
+
+  <label style="height: 44px; border-radius: 14px; background: #0F0F11; display: flex; align-items: center; gap: 10px; padding: 0 14px; color: #A1A1AA">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input type="search" placeholder="Search – try “york”, “coffee”, “medal”" aria-label="Search stickers" style="flex: 1; min-width: 0; background: none; border: 0; outline: none; color: #F4F4F5; font: inherit; font-size: 14px">
+  </label>
+
+  <div role="tablist" aria-label="Element type" style="padding: 4px; border-radius: 14px; background: #0F0F11; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+      <button role="tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{isStickers}}" hint-placeholder-val="{{true}}">
+    <div class="{{lookClass}}" style="display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+        <span style="font-size: 13px; color: #A1A1AA">Look</span>
+        <div role="radiogroup" aria-label="Sticker look" style="padding: 3px; border-radius: 12px; background: #0F0F11; display: flex; gap: 3px">
+          <sc-for list="{{looks}}" as="lk" hint-placeholder-count="3">
+            <button role="radio" aria-checked="{{lk.checked}}" onClick="{{lk.pick}}" style="{{lk.style}}">{{lk.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 6px; overflow: hidden">
+        <button class="chip" aria-pressed="true" style="background: {{accent}}; color: #0F0F11; font-weight: 600">All</button>
+        <button class="chip" aria-pressed="false">Cities</button>
+        <button class="chip" aria-pressed="false">Everyday</button>
+        <button class="chip" aria-pressed="false">Hiking</button>
+        <button class="chip" aria-pressed="false">Endurance</button>
+        <button class="chip" aria-pressed="false">Travel</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <button style="height: 44px; border-radius: 12px; border: 1.5px dashed #55555E; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: #D4D4D8">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 5v14M5 12h14"/></svg>
+          Import PNG
+        </button>
+        <button style="height: 44px; border-radius: 12px; border: 1.5px dashed #55555E; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: #D4D4D8">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>
+          Cut out of photo
+        </button>
+      </div>
+
+      <h2 class="sec"><span>Cities</span><span>12 · more coming</span></h2>
+      <div class="grid3">
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Singapore – Marina Bay Sands"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M10 23h10v29H10zM27 23h10v29H27zM44 23h10v29H44z" fill="#C9D6DF"/><path d="M17 23h3v29h-3zM34 23h3v29h-3zM51 23h3v29h-3z" fill="#9FB2C0"/><path d="M5 18h51q5 0 7 3l-2 2H5z" fill="#8FA6B8"/><path d="M4 52h56v7H4z" fill="#86B6D9"/></g><g class="ink" filter="url(#rough)"><path d="M5 18h51q5 0 7 3l-2 2H5zM10 23v29M20 23v29M27 23v29M37 23v29M44 23v29M54 23v29M4 52h56"/></g><g class="fine" filter="url(#rough)"><path d="M11 28h8M11 34h8M11 40h8M11 46h8M28 28h8M28 34h8M28 40h8M28 46h8M45 28h8M45 34h8M45 40h8M45 46h8M14 15v3M22 14v4M40 15v3M48 14v4M8 56q3-1.5 6 0t6 0M30 57q3-1.5 6 0t6 0M46 55q3-1.5 6 0"/></g></svg><span class="cap">Singapore</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="London – Big Ben"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M25 19h14v37H25z" fill="#E9C47F"/><path d="M35 19h4v37h-4z" fill="#C9A35C"/><path d="M27 14 32 4l5 10z" fill="#6F8799"/><path d="M4 42h21v14H4zM39 46h21v10H39z" fill="#E2C489"/><circle cx="32" cy="26.5" r="5.5" fill="#FFF8E7"/></g><g class="ink" filter="url(#rough)"><path d="M32 1v3M27 14 32 4l5 10M26 14h12M26 14v5M38 14v5M25 19h14M25 19v37M39 19v37M25 34h14M2 56h60M4 42h21M4 42v14M39 46h21M60 46v10M4 42v-2h3v2h3v-2h3v2h3v-2h3v2h3v-2h3v2"/><circle cx="32" cy="26.5" r="5.5"/><path d="M32 26.5V23M32 26.5l2.5 1.5"/></g><g class="fine" filter="url(#rough)"><path d="M28 19v-3a1 1 0 0 1 2 0v3M31 19v-3a1 1 0 0 1 2 0v3M34 19v-3a1 1 0 0 1 2 0v3M28 37v17M32 37v17M36 37v17M26 40h12M26 47h12M8 46v5M12 46v5M16 46v5M20 46v5M44 49v4M48 49v4M52 49v4M56 49v4M37 22l1.5-1.5M37 30l1.5-1.5M37 40l1.5-1.5M37 50l1.5-1.5"/></g></svg><span class="cap">London</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="York – York Minster"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M10 14h12v44H10zM42 14h12v44H42zM22 30l10-12 10 12v28H22z" fill="#D8C9A8"/><path d="M19 14h3v44h-3zM51 14h3v44h-3z" fill="#BBA982"/><path d="M26 44V32q6-8 12 0v12z" fill="#8FA6B8"/></g><g class="ink" filter="url(#rough)"><path d="M10 14h12v44H10zM42 14h12v44H42zM22 30l10-12 10 12M22 58h20M4 58h56M26 44V32q6-8 12 0v12zM29 58v-6q3-4 6 0v6M10 9v5M16 8v6M22 9v5M42 9v5M48 8v6M54 9v5"/></g><g class="fine" filter="url(#rough)"><path d="M13 22v6M19 22v6M45 22v6M51 22v6M13 34v8M19 34v8M45 34v8M51 34v8M32 28v16M26 38h12M29 32l3 3 3-3M10 30h12M42 30h12M10 46h12M42 46h12M52 50l2-2M52 54l2-2M20 50l2-2M20 54l2-2"/></g></svg><span class="cap">York</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Edinburgh – the castle on its rock"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M2 60q4-12 10-14l4-6h6l4 2h20l6-2 6 6q6 4 8 14z" fill="#8C8073"/><path d="M12 22h6v18h-6zM18 28h22v12H18zM40 32h12v10H40z" fill="#C9BFA8"/><path d="M15 12l6 2-6 2z" fill="#3F6FA8"/></g><g class="ink" filter="url(#rough)"><path d="M2 60q4-12 10-14l4-6h6l4 2h20l6-2 6 6q6 4 8 14M12 40V22h6v18M18 40V28h22v12M40 42V32h12v10M18 28v-2h3v2h3v-2h3v2h3v-2h3v2h3v-2h3v2h2M15 22V12l6 2-6 2M12 40h40"/></g><g class="fine" filter="url(#rough)"><path d="M22 32v3M27 32v3M32 32v3M37 32v3M44 35v3M48 35v3M14 27v3M8 54l3-4M16 52l2-5M44 50l3 4M50 54l3 3M26 50l-2 6M36 50l2 6M30 46l-1 4"/></g></svg><span class="cap">Edinburgh</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Paris – Eiffel Tower"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M14 60 22 42h20l8 18h-8q-10-16-20 0zM22 40l5-12h10l5 12zM27 26l2-14h6l2 14z" fill="#C7A07A"/><path d="M42 42.5 50 60h-4l-6-16zM37 28l5 12h-3z" fill="#A98560"/></g><g class="ink" filter="url(#rough)"><path d="M32 2v6M30 8h4l1 4h-6zM29 12l-2 14M35 12l2 14M26 26h12v2H26zM27 28l-5 12M37 28l5 12M20 40h24v2.5H20zM22 42.5 14 60M42 42.5 50 60M22 60q10-16 20 0M10 60h8M46 60h8"/></g><g class="fine" filter="url(#rough)"><path d="M29 14l6 5M35 14l-6 5M28.5 19l7 6M35.5 19l-7 6M26 30l12 9M38 30l-12 9M21 45l7 8M43 45l-7 8M18 50l4 5M46 50l-4 5M4 61h56M6 58a3 3 0 0 1 6 0M52 58a3 3 0 0 1 6 0"/></g></svg><span class="cap">Paris</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Dijon – mustard jar"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M18 24h28v28q0 6-6 6H24q-6 0-6-6z" fill="#E3B341"/><path d="M19 12h26v4H19zM20 16h24v8H20z" fill="#3F4E5E"/><path d="M18 30h28v18H18z" fill="#FFF8E7"/></g><g class="ink" filter="url(#rough)"><path d="M18 24h28v28q0 6-6 6H24q-6 0-6-6zM19 12h26v4H19zM20 16h24v8M18 30h28M18 48h28"/><text x="32" y="45" text-anchor="middle" font-family="Special Elite, monospace" font-size="9.5" fill="#2A2622" stroke="none">DIJON</text><text x="32" y="37.5" text-anchor="middle" font-family="Special Elite, monospace" font-size="4.6" fill="#2A2622" stroke="none">MOUTARDE</text></g><g class="fine" filter="url(#rough)"><path d="M23 12v4M27 12v4M31 12v4M35 12v4M39 12v4M43 12v4M18 31l3 2 3-2 3 2 3-2 3 2 3-2 3 2 3-2 3 2M22 26v2M22 51v4M38 53h.01M34 55h.01M41 27h.01M28 27h.01"/></g></svg><span class="cap">Dijon</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Lyon – Fourvière basilica on the hill"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M2 60q14-10 30-10t30 10z" fill="#8DB57A"/><path d="M10 20h8v30h-8zM46 20h8v30h-8zM18 30h28v20H18zM22 30l10-8 10 8z" fill="#E2D6BE"/><path d="M15 20h3v30h-3zM51 20h3v30h-3z" fill="#C9BB9E"/></g><g class="ink" filter="url(#rough)"><path d="M10 50V20h8v30M46 50V20h8v30M18 50V30h28v20M22 30l10-8 10 8M10 20v-2h2v2h2v-2h2v2h2v-2M46 20v-2h2v2h2v-2h2v2h2v-2M21 30v-6h4v6M39 30v-6h4v6M2 60q14-10 30-10t30 10M28 50v-8q4-5 8 0v8M32 22v-4"/></g><g class="fine" filter="url(#rough)"><path d="M13 26v5M15 26v5M49 26v5M51 26v5M14 38v6M50 38v6M22 33v14M26 33v14M38 33v14M42 33v14M31 16h2M6 57q2-4 4 0M54 57q2-4 4 0M48 58q2-3 4 0"/></g></svg><span class="cap">Lyon</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Barcelona – Sagrada Família"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M14 42 18 14l4 28zM22 42 26 8l4 34zM34 42 38 8l4 34zM42 42 46 14l4 28zM10 42h44v16H10z" fill="#D8B98E"/><path d="M26 8l4 34h-2zM38 8l4 34h-2z" fill="#BC9A6C"/><circle cx="18" cy="12.5" r="2" fill="#E8735A"/><circle cx="26" cy="6.5" r="2" fill="#F5C451"/><circle cx="38" cy="6.5" r="2" fill="#5AC8FA"/><circle cx="46" cy="12.5" r="2" fill="#E8735A"/></g><g class="ink" filter="url(#rough)"><path d="M14 42 18 14l4 28M22 42 26 8l4 34M34 42 38 8l4 34M42 42 46 14l4 28M10 42h44M10 42v16M54 42v16M6 58h52M16 58v-8q4-6 8 0v8M28 58v-10q4-7 8 0v10M40 58v-8q4-6 8 0v8"/><circle cx="18" cy="12.5" r="1.8"/><circle cx="26" cy="6.5" r="1.8"/><circle cx="38" cy="6.5" r="1.8"/><circle cx="46" cy="12.5" r="1.8"/></g><g class="fine" filter="url(#rough)"><path d="M18 20v18M26 16v22M38 16v22M46 20v18" stroke-dasharray="1 3"/><path d="M10 46h44M59 40V6H46M59 10l-4-4M50 6v4"/></g></svg><span class="cap">Barcelona</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Rome – Colosseum"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M4 58V28q18-10 40-8l3 3 3-1 3 4 3 1 2 4 2 5v22z" fill="#E6BC8E"/><path d="M44 20l3 3 3-1 3 4 3 1 2 4 2 5v22H48z" fill="#C99A68"/></g><g class="ink" filter="url(#rough)"><path d="M4 58V28q18-10 40-8l3 3 3-1 3 4 3 1 2 4 2 5v22M2 58h60M4 38q24-9 56-4M4 48q24-7 56-3"/></g><g class="fine" filter="url(#rough)"><path d="M7 58v-5a2 2 0 0 1 4 0v5M14 58v-5a2 2 0 0 1 4 0v5M21 58v-5a2 2 0 0 1 4 0v5M28 58v-5a2 2 0 0 1 4 0v5M35 58v-5a2 2 0 0 1 4 0v5M42 58v-5a2 2 0 0 1 4 0v5M49 58v-5a2 2 0 0 1 4 0v5M55 58v-5a2 2 0 0 1 4 0v5M7 46v-4a2 2 0 0 1 4 0v4M14 45v-4a2 2 0 0 1 4 0v4M21 44v-4a2 2 0 0 1 4 0v4M28 43v-4a2 2 0 0 1 4 0v4M35 43v-4a2 2 0 0 1 4 0v4M42 43v-4a2 2 0 0 1 4 0v4M49 43v-4a2 2 0 0 1 4 0v4M8 31h3M15 29h3M22 27h3M29 26h3M36 25h3"/></g></svg><span class="cap">Rome</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Athens – Parthenon on the Acropolis"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M2 60q6-8 14-9h32q8 1 14 9z" fill="#B9A88C"/><path d="M10 26h44v24H10z" fill="#E6D8B8"/><path d="M17.5 30H20v17h-2.5zM28.5 30H31v17h-2.5zM39.5 30H42v17h-2.5zM50.5 30H53v17h-2.5z" fill="#CDBB94"/></g><g class="ink" filter="url(#rough)"><path d="M2 60q6-8 14-9h32q8 1 14 9M8 50h48M10 47h44M10 30h44M10 26h44M10 26l12-7M54 26l-12-7M12 30v17M14.5 30v17M17.5 30v17M20 30v17M23 30v17M25.5 30v17M28.5 30v17M31 30v17M34 30v17M36.5 30v17M39.5 30v17M42 30v17M45 30v17M47.5 30v17M50.5 30v17M53 30v17"/></g><g class="fine" filter="url(#rough)"><path d="M13.25 31v15M18.75 31v15M24.25 31v15M29.75 31v15M35.25 31v15M40.75 31v15M46.25 31v15M51.75 31v15M14 28h2M22 28h2M30 28h2M38 28h2M46 28h2M12 56l3-3M50 55l3 3M30 54l-1 4"/></g></svg><span class="cap">Athens</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Delphi – the Tholos"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M2 40 16 24l10 8 12-14 14 12 10-4v14H2z" fill="#A9B8A0"/><path d="M8 52q24-6 48 0v4q-24 8-48 0z" fill="#D8C9A8"/><path d="M18 26h4v25h-4zM28 26h4v26h-4zM38 26h4v25h-4zM16 22h30v8H16z" fill="#E6D8B8"/></g><g class="ink" filter="url(#rough)"><path d="M2 40 16 24l10 8 12-14 14 12 10-4M8 52q24 8 48 0M8 52v4q24 8 48 0v-4M8 52q24-6 48 0M18 30v21M22 30v21M28 30v22M32 30v22M38 30v21M42 30v21M16 26h30v4H16zM15 22h32v4H15zM12 50v-4h3v4M49 50v-5h3v5"/></g><g class="fine" filter="url(#rough)"><path d="M20 31v19M30 31v20M40 31v19M19 26v4M23 26v4M27 26v4M31 26v4M35 26v4M39 26v4M43 26v4M58 52q-3-10 0-18 3 8 0 18M58 52v3"/></g></svg><span class="cap">Delphi</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Mykonos – windmill"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M2 56h60v6H2z" fill="#5AA0D8"/><path d="M22 30h18v26H22z" fill="#FFFFFF"/><path d="M36 30h4v26h-4z" fill="#DDE3E8"/><path d="M20 30q11-10 22 0z" fill="#B58A5A"/><path d="M28 56v-6q3-4 6 0v6z" fill="#3F6FA8"/><path d="M31 24 31 4l8 4zM31 24l18-8 0 8zM31 24l-18 8 0-8z" fill="#F5F1E6"/></g><g class="ink" filter="url(#rough)"><path d="M22 56V30h18v26M20 30q11-10 22 0zM28 56v-6q3-4 6 0v6M2 56h60M31 24V4M31 24l18-8M31 24l18 6M31 24 13 32M31 24 13 16M31 24l-4 0M31 4l8 4M49 16v8M13 32v-8"/><circle cx="31" cy="24" r="1.6"/></g><g class="fine" filter="url(#rough)"><path d="M33 8l-2 0M35 12l-4 0M37 18l-6 0M24 26l2-3M28 24l1-2M35 24l-1-2M39 26l-2-3M26 38v4M37 36v4M6 60q3-1.5 6 0M44 60q3-1.5 6 0"/></g></svg><span class="cap">Mykonos</span></a>
+      </div>
+
+      <h2 class="sec"><span>Everyday</span><span>8</span></h2>
+      <div class="grid3">
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Coffee – cappuccino"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><ellipse cx="30" cy="51" rx="22" ry="5" fill="#9FB2C0"/><path d="M14 26h32v8q0 14-16 14T14 34z" fill="#D9E4EC"/><ellipse cx="30" cy="26" rx="16" ry="4" fill="#C9965E"/><path d="M30 29q-5-3-3-5 2-1 3 1 1-2 3-1 2 2-3 5z" fill="#FFF8E7"/></g><g class="ink" filter="url(#rough)"><ellipse cx="30" cy="51" rx="22" ry="5"/><path d="M14 26v8q0 14 16 14t16-14v-8M46 30q8 0 8 6t-9 6"/><ellipse cx="30" cy="26" rx="16" ry="4"/></g><g class="fine" filter="url(#rough)"><path d="M24 18q-2-3 0-6t0-6M31 18q-2-3 0-6t0-6M38 18q-2-3 0-6M30 29q-5-3-3-5 2-1 3 1 1-2 3-1 2 2-3 5zM40 36l2-3M41 41l2-3"/></g></svg><span class="cap">Coffee</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Phone taking a photo"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><rect x="18" y="6" width="28" height="52" rx="5" fill="#55606E"/><path d="M21 11h22v40H21z" fill="#9CC3E6"/><path d="M21 51V40l7-9 5 6 4-4 6 7v11z" fill="#8DB57A"/><circle cx="37" cy="19" r="3" fill="#F5C451"/></g><g class="ink" filter="url(#rough)"><rect x="18" y="6" width="28" height="52" rx="5"/><path d="M21 11h22v40H21zM21 40l7-9 5 6 4-4 6 7M29 54h6"/><circle cx="37" cy="19" r="3"/></g><g class="fine" filter="url(#rough)"><path d="M30 8.5h4M24 14h3M24 14v3M40 48h-3M40 48v-3M46 18h2M46 24h2M14 16l-3-2M13 22h-3M14 28l-3 2"/></g></svg><span class="cap">Phone</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Running"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M36 15 30 30" stroke="#E8735A" stroke-width="7" stroke-linecap="round"/><path d="M30 30l4 5" stroke="#3F4E5E" stroke-width="7" stroke-linecap="round"/><ellipse cx="30" cy="58" rx="16" ry="2.5" fill="#BBA982"/></g><g class="ink" filter="url(#rough)" style="stroke-width: 2"><circle cx="39" cy="9" r="4"/><path d="M36 15 30 30M35 18l7 6 5-4M34 18l-8 2-4 6M30 30l8 10-2 12M30 30l-6 10-10 2M36 52h4M14 42l-2-4"/></g><g class="fine" filter="url(#rough)"><path d="M4 20h9M2 28h11M6 36h7M44 6l2-2M46 10h2"/></g></svg><span class="cap">Running</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Swimming"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M2 36h60v24H2z" fill="#86B6D9"/><path d="M26 30a5 5 0 0 1 10 0z" fill="#E8735A"/></g><g class="ink" filter="url(#rough)" style="stroke-width: 2"><path d="M26 31a5 5 0 0 1 10 0M36 31q8-16 20-6M26 33l-10 4M2 37q5-4 10 0t10 0 10 0 10 0 10 0 10 0M2 46q5-4 10 0t10 0 10 0 10 0 10 0 10 0"/><circle cx="31" cy="32" r="5"/></g><g class="fine" filter="url(#rough)"><path d="M28 31h6M56 20l2-3M59 24h3M52 18l0-3M8 54q5-3 10 0M38 55q5-3 10 0M40 31h.01M44 29h.01"/></g></svg><span class="cap">Swimming</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Cooking – pan with egg"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><ellipse cx="26" cy="36" rx="18" ry="8" fill="#3A3330"/><path d="M18 34q-2-5 6-5 4-4 9 0 6 1 3 5-2 4-9 3-8 1-9-3z" fill="#FFFFFF"/><circle cx="26" cy="34" r="3.2" fill="#F5C451"/><path d="M14 54q2-6 4 0 2-6 4 0 2-6 4 0 2-6 4 0 2-6 4 0" fill="#F29A4A"/></g><g class="ink" filter="url(#rough)"><ellipse cx="26" cy="36" rx="18" ry="8"/><path d="M8 36q0 8 18 8t18-8M43 33l17-7M18 34q-2-5 6-5 4-4 9 0 6 1 3 5-2 4-9 3-8 1-9-3z"/><circle cx="26" cy="34" r="3.2"/></g><g class="fine" filter="url(#rough)"><path d="M14 54q2-6 4 0 2-6 4 0 2-6 4 0 2-6 4 0 2-6 4 0M20 22q-2-3 0-6M27 20q-2-3 0-6M34 22q-2-3 0-6M52 28l2-1"/></g></svg><span class="cap">Cooking</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Pasta bowl"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M8 34h48q-2 18-24 18T8 34z" fill="#D9E4EC"/><path d="M14 34q4-10 18-10t18 10z" fill="#F2C94C"/><circle cx="30" cy="27" r="4" fill="#D9483B"/><path d="M36 25q4-3 6 0-3 3-6 0z" fill="#5E9A5A"/></g><g class="ink" filter="url(#rough)"><path d="M8 34h48q-2 18-24 18T8 34zM22 56h20M44 6l-6 22M41 5l-1.5 5M46 6l-1.5 5M49 7l-2 5"/></g><g class="fine" filter="url(#rough)"><path d="M14 34q4-8 8-2t8-3 8 2 8-3 4 6M17 31q4-5 8 0t8 0 8 0M36 25q4-3 6 0-3 3-6 0M38 26l2-1M14 40l2 4M48 40l-2 4"/><circle cx="30" cy="27" r="4"/></g></svg><span class="cap">Pasta</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Croissant"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M6 42q4-20 26-22t26 22q-6 3-11-2-4-9-15-9t-15 9q-5 5-11 2z" fill="#D9A05B"/><path d="M26 22l4 12 4-12q-4-2-8 0z" fill="#B57A3A"/></g><g class="ink" filter="url(#rough)"><path d="M6 42q4-20 26-22t26 22q-6 3-11-2-4-9-15-9t-15 9q-5 5-11 2z"/></g><g class="fine" filter="url(#rough)"><path d="M17 28l5 11M26 22l4 12M38 22l-4 12M47 28l-5 11M10 38l5 2M54 38l-5 2M8 50h48" /></g></svg><span class="cap">Croissant</span></a>
+        <a href="EditorStickers.dc.html" class="tile3" aria-label="Gelato cone"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M22 34l10 26 10-26z" fill="#D9A05B"/><circle cx="32" cy="28" r="10" fill="#A8C686"/><circle cx="32" cy="15" r="8" fill="#F28B9B"/></g><g class="ink" filter="url(#rough)"><path d="M22 34l10 26 10-26"/><path d="M22.5 31a10 10 0 0 1 3-10M41.5 31a10 10 0 0 0-3-10M24.5 18a8 8 0 1 1 15 0"/><path d="M22 33q3 3 5 0t5 1 5-1 5 0M40 10l6-6"/></g><g class="fine" filter="url(#rough)"><path d="M25 38l12 12M30 36l9 9M35 36l4 4M39 38 27 50M34 36l-9 9M29 36l-4 4M27 33v4M37 33v3M29 13h.01M35 16h.01M31 18h.01"/></g></svg><span class="cap">Gelato</span></a>
+      </div>
+
+      <h2 class="sec"><span>Hiking &amp; outdoors</span><span>See all</span></h2>
+      <div class="grid4">
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Summit with flag"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M4 56 24 22l8 10 8-16 20 40z" fill="#8FA2B5"/><path d="M40 16V5l9 3.5-9 3.5z" fill="#E8735A"/></g><g class="ink" filter="url(#rough)"><path d="M2 56h60M4 56 24 22l8 10 8-16 20 40M18 32l4 2 4-3M36 23l3 1 2-2 3 2M40 16V5l9 3.5-9 3.5"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Hiking boot"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M14 10h18l2 26 18 8q6 3 6 10v4H10l2-30z" fill="#9C6B45"/><path d="M10 54h48v4H10z" fill="#3A3330"/></g><g class="ink" filter="url(#rough)"><path d="M14 10h18l2 26 18 8q6 3 6 10v4H10l2-30zM10 54h48M10 58l1 2h46l1-2M18 18h10M17 24h12M17 30h12M34 36l-6 6"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Backpack"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M18 18q0-8 14-8t14 8v38q0 4-4 4H22q-4 0-4-4z" fill="#D9734A"/><path d="M22 36h20v14H22z" fill="#B85A35"/></g><g class="ink" filter="url(#rough)"><path d="M18 18q0-8 14-8t14 8v38q0 4-4 4H22q-4 0-4-4zM26 10V6h12v4M22 36h20v14H22zM22 40h20M18 26h28M14 30v18M50 30v18M14 30h4M46 30h4"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Tent"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M6 54 30 14l26 40z" fill="#E9B44C"/><path d="M24 54l6-24 6 24z" fill="#4E5B4C"/></g><g class="ink" filter="url(#rough)"><path d="M6 54 30 14l26 40M30 14l2-4M30 14l-10 40M30 30l-6 24M30 30l6 24M2 54h60M54 54l4 4M6 54l-4 4"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Compass"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><circle cx="32" cy="32" r="22" fill="#E2CE9F"/><path d="M32 14l5 18H27z" fill="#D9483B"/></g><g class="ink" filter="url(#rough)"><circle cx="32" cy="32" r="22"/><circle cx="32" cy="32" r="17"/><path d="M32 14l5 18-5 18-5-18zM27 32h10M32 6v4M32 54v4M6 32h4M54 32h4"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Trail signpost"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M14 14h30l6 6-6 6H14z" fill="#C79A63"/><path d="M50 30H20l-6 6 6 6h30z" fill="#B88752"/></g><g class="ink" filter="url(#rough)"><path d="M30 8v52M14 14h30l6 6-6 6H14zM50 30H20l-6 6 6 6h30zM18 20h20M24 36h20M24 60h12"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Pine trees"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M20 6 10 22h6L8 34h24l-8-12h6zM44 14 34 30h6l-8 14h24l-8-14h6z" fill="#4F7A57"/></g><g class="ink" filter="url(#rough)"><path d="M20 6 10 22h6L8 34h24l-8-12h6zM20 34v8M44 14 34 30h6l-8 14h24l-8-14h6zM44 44v8M2 56h60"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Campfire"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M32 12q10 12 6 22 6-4 4-10 8 10 0 20H24q-10-10-2-20 0 6 4 8-4-10 6-20z" fill="#F29A4A"/><path d="M32 30q6 8 0 14-6-6 0-14z" fill="#F5C451"/></g><g class="ink" filter="url(#rough)"><path d="M32 12q10 12 6 22 6-4 4-10 8 10 0 20H24q-10-10-2-20 0 6 4 8-4-10 6-20zM14 54l36-8M14 46l36 8"/></g></svg></a>
+      </div>
+
+      <h2 class="sec"><span>Endurance · swim bike run</span><span>See all</span></h2>
+      <div class="grid4">
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Road bike"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><circle cx="16" cy="42" r="11" fill="#CFE0EA"/><circle cx="48" cy="42" r="11" fill="#CFE0EA"/><path d="M16 42 26 26h18l4 16M26 26l8 16H16M34 42l10-16" stroke="#D9483B" stroke-width="3" fill="none"/></g><g class="ink" filter="url(#rough)"><circle cx="16" cy="42" r="11"/><circle cx="48" cy="42" r="11"/><path d="M16 42 26 26h18l4 16M26 26l8 16H16M34 42l10-16M23 23h7M43 21h5q2 0 2 3"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Running shoe"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M6 44q2-14 14-16l10 4q8-10 14-10 4 0 4 6l10 10q4 4 4 10H6z" fill="#5AC8FA"/></g><g class="ink" filter="url(#rough)"><path d="M6 44q2-14 14-16l10 4q8-10 14-10 4 0 4 6l10 10q4 4 4 10H6zM6 52q2 4 8 4h40q8 0 8-4M30 32l4 4M34 28l4 4M18 40q10 2 20-4"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Swim goggles"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><ellipse cx="20" cy="32" rx="11" ry="8" fill="#7FC4E8"/><ellipse cx="44" cy="32" rx="11" ry="8" fill="#7FC4E8"/></g><g class="ink" filter="url(#rough)"><ellipse cx="20" cy="32" rx="11" ry="8"/><ellipse cx="44" cy="32" rx="11" ry="8"/><path d="M31 32q1-3 2 0M9 31q-6 0-7 4M55 31q6 0 7 4M15 28q3-2 6-1M39 28q3-2 6-1"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Finisher medal"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M20 4h10l4 22h-8zM44 4H34l-4 22h8z" fill="#5A7BD9"/><circle cx="32" cy="42" r="15" fill="#E9C25B"/></g><g class="ink" filter="url(#rough)"><path d="M20 4h10l4 22M44 4H34l-4 22M26 26h12"/><circle cx="32" cy="42" r="15"/><circle cx="32" cy="42" r="10"/><path d="m32 36 2 4 4 .5-3 3 1 4-4-2-4 2 1-4-3-3 4-.5z"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Stopwatch"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><circle cx="32" cy="36" r="20" fill="#F2D6A2"/></g><g class="ink" filter="url(#rough)"><circle cx="32" cy="36" r="20"/><path d="M28 8h8M32 8v8M48 18l4-4M32 36l7-8M32 20v3M48 36h-3M32 52v-3M16 36h3"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Race bib, 226"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M8 14h48v8H8z" fill="#D9483B"/><path d="M8 22h48v28H8z" fill="#FFFFFF"/></g><g class="ink" filter="url(#rough)"><rect x="8" y="14" width="48" height="36" rx="2"/><path d="M8 22h48M11 17l3 3M50 17l3 3M11 47l3-3M50 47l3-3"/><text x="32" y="43" text-anchor="middle" font-family="Permanent Marker, cursive" font-size="17" fill="#2A2622" stroke="none">226</text></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Swim bike run ribbon"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M2 22h60l-5 10 5 10H2l5-10z" fill="#E8735A"/></g><g class="ink" filter="url(#rough)"><path d="M2 22h60l-5 10 5 10H2l5-10z"/><text x="32" y="30" text-anchor="middle" font-family="Permanent Marker, cursive" font-size="8" fill="#2A2622" stroke="none">SWIM BIKE</text><text x="32" y="39" text-anchor="middle" font-family="Permanent Marker, cursive" font-size="8" fill="#2A2622" stroke="none">RUN</text></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Chequered finish flag"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M14 10h42v24H14z" fill="#FFFFFF"/><path d="M14 10h7v6h-7zM28 10h7v6h-7zM42 10h7v6h-7zM21 16h7v6h-7zM35 16h7v6h-7zM49 16h7v6h-7zM14 22h7v6h-7zM28 22h7v6h-7zM42 22h7v6h-7zM21 28h7v6h-7zM35 28h7v6h-7zM49 28h7v6h-7z" fill="#2A2622"/></g><g class="ink" filter="url(#rough)"><path d="M14 10h42v24H14zM14 6v54M10 60h8"/></g></svg></a>
+      </div>
+
+      <h2 class="sec"><span>Travel, maps &amp; pins</span><span>See all</span></h2>
+      <div class="grid4">
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Location pin"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M32 58S14 38 14 24a18 18 0 0 1 36 0c0 14-18 34-18 34z" fill="#E8735A"/></g><g class="ink" filter="url(#rough)"><path d="M32 58S14 38 14 24a18 18 0 0 1 36 0c0 14-18 34-18 34z"/><circle cx="32" cy="24" r="7"/><path d="M24 61q8 3 16 0"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Paper plane with dotted route"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M38 22 58 8l-8 22-6-6z" fill="#CFE0EA"/></g><g class="ink" filter="url(#rough)"><path d="M6 56q8-20 22-14t14-18" stroke-dasharray="2 4"/><path d="M38 22 58 8l-8 22-6-6zM58 8 44 24v8l4-4"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Passport stamp, bon voyage"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><circle cx="32" cy="32" r="24" fill="#EFC2C2" opacity=".6"/></g><g class="ink" filter="url(#rough)"><g transform="rotate(-12 32 32)"><circle cx="32" cy="32" r="24" stroke="#B23A3A"/><circle cx="32" cy="32" r="18" stroke="#B23A3A"/><path d="M11 32h4M49 32h4" stroke="#B23A3A"/><text x="32" y="30" text-anchor="middle" font-family="Special Elite, monospace" font-size="9" fill="#B23A3A" stroke="none">BON</text><text x="32" y="40" text-anchor="middle" font-family="Special Elite, monospace" font-size="9" fill="#B23A3A" stroke="none">VOYAGE</text></g></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Suitcase"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><rect x="10" y="20" width="44" height="32" rx="4" fill="#C9874E"/><path d="M10 30h44" stroke="#F5C451" stroke-width="3"/></g><g class="ink" filter="url(#rough)"><rect x="10" y="20" width="44" height="32" rx="4"/><path d="M24 20v-6h16v6M18 20v32M46 20v32M14 52v4M50 52v4"/><circle cx="32" cy="38" r="4"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Camera"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><rect x="8" y="20" width="48" height="32" rx="4" fill="#7B8390"/><circle cx="32" cy="36" r="10" fill="#9CC3E6"/></g><g class="ink" filter="url(#rough)"><rect x="8" y="20" width="48" height="32" rx="4"/><path d="M22 20l4-6h12l4 6M12 26h6"/><circle cx="32" cy="36" r="10"/><circle cx="32" cy="36" r="5"/><circle cx="48" cy="26" r="1.5"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Folded map"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M6 14l16-4 20 6 16-4v38l-16 4-20-6-16 4z" fill="#EBDDB0"/><path d="M12 42q8-14 18-6t16-12" stroke="#E8735A" stroke-width="2" fill="none" stroke-dasharray="2 3"/></g><g class="ink" filter="url(#rough)"><path d="M6 14l16-4 20 6 16-4v38l-16 4-20-6-16 4zM22 10v38M42 16v38M46 19l4 4M50 19l-4 4"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Plane ticket"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M6 18h52v8a4 4 0 0 0 0 8v8H6v-8a4 4 0 0 0 0-8z" fill="#9CC3E6"/></g><g class="ink" filter="url(#rough)"><path d="M6 18h52v8a4 4 0 0 0 0 8v8H6v-8a4 4 0 0 0 0-8zM12 36h20"/><path d="M44 19v22" stroke-dasharray="2 2"/><text x="11" y="30" font-family="Special Elite, monospace" font-size="7" fill="#2A2622" stroke="none">LHR→FCO</text></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Globe"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><circle cx="32" cy="30" r="20" fill="#9CC3E6"/><path d="M20 20q6-4 10 2t-4 10l-6-2zM36 28q8-2 10 6-4 8-10 4z" fill="#8DB57A"/></g><g class="ink" filter="url(#rough)"><circle cx="32" cy="30" r="20"/><path d="M12 30h40M32 10q-10 20 0 40M32 10q10 20 0 40M24 57h16M32 50v7"/></g></svg></a>
+      </div>
+
+      <h2 class="sec"><span>Doodles</span><span>See all</span></h2>
+      <div class="grid4">
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Star"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="m32 6 7 16 17 2-13 11 4 17-15-9-15 9 4-17L8 24l17-2z" fill="#F5C451"/></g><g class="ink" filter="url(#rough)"><path d="m32 6 7 16 17 2-13 11 4 17-15-9-15 9 4-17L8 24l17-2z"/><path d="m33 8 6 15" opacity=".5"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Heart"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><path d="M32 54S8 40 8 24a12 12 0 0 1 24-4 12 12 0 0 1 24 4c0 16-24 30-24 30z" fill="#F28B9B"/></g><g class="ink" filter="url(#rough)"><path d="M32 54S8 40 8 24a12 12 0 0 1 24-4 12 12 0 0 1 24 4c0 16-24 30-24 30z"/><path d="M15 22q2-6 8-6"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Loopy arrow"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="ink" filter="url(#rough)" style="stroke-width: 2.2"><path d="M6 48q10-22 24-14t-2 10-6-8 16-16 16-8"/><path d="m46 8 9 4-6 7"/></g></svg></a>
+        <a href="EditorStickers.dc.html" class="tile" aria-label="Sun"><svg class="sk" viewBox="0 0 64 64" aria-hidden="true"><g class="wash" filter="url(#wash)" transform="translate(1.5 1.5)"><circle cx="32" cy="32" r="12" fill="#F5C451"/></g><g class="ink" filter="url(#rough)"><circle cx="32" cy="32" r="12"/><path d="M32 6v8M32 50v8M6 32h8M50 32h8M13.5 13.5l5.5 5.5M45 45l5.5 5.5M13.5 50.5 19 45M45 19l5.5-5.5"/></g></svg></a>
+      </div>
+
+      <h2 class="sec"><span>Handwritten words</span><span>Edit after placing</span></h2>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <a href="EditorStickers.dc.html" class="word" style="font-family: Caveat, cursive; font-weight: 700; font-size: 24px">wish you were here</a>
+        <a href="EditorStickers.dc.html" class="word" style="font-family: 'Permanent Marker', cursive; font-size: 20px">SUMMIT!</a>
+        <a href="EditorStickers.dc.html" class="word" style="font-family: 'Permanent Marker', cursive; font-size: 18px; color: #B23A3A">finisher</a>
+        <a href="EditorStickers.dc.html" class="word" style="font-family: Caveat, cursive; font-weight: 700; font-size: 26px">day one</a>
+        <a href="EditorStickers.dc.html" class="word" style="font-family: Caveat, cursive; font-weight: 700; font-size: 26px; color: #3F6FA8">ciao bella</a>
+        <a href="EditorStickers.dc.html" class="word" style="font-family: 'Special Elite', monospace; font-size: 15px">out of office</a>
+        <a href="EditorStickers.dc.html" class="word" style="font-family: 'Permanent Marker', cursive; font-size: 16px">race day</a>
+        <a href="EditorStickers.dc.html" class="word" style="font-family: Caveat, cursive; font-weight: 700; font-size: 24px; color: #4F7A57">trail mix</a>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{isTape}}" hint-placeholder-val="{{false}}">
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h2 class="sec"><span>Tape</span><span></span></h2>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{tapes}}" as="tp" hint-placeholder-count="8">
+          <a href="EditorStickers.dc.html" aria-label="{{tp.label}}" style="height: 64px; border-radius: 14px; background: #3A3A42; display: flex; align-items: center; justify-content: center">
+            <span style="{{tp.style}}"></span>
+          </a>
+        </sc-for>
+      </div>
+      <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #A1A1AA">Tape is semi-see-through and snaps to photo corners. Drag its ends to make it longer.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{isPaper}}" hint-placeholder-val="{{false}}">
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h2 class="sec"><span>Paper pieces</span><span></span></h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <a href="EditorStickers.dc.html" aria-label="Torn paper scrap" style="height: 96px; border-radius: 14px; background: #3A3A42; display: flex; align-items: center; justify-content: center">
+          <svg viewBox="0 0 64 64" aria-hidden="true" style="width: 64px; height: 64px"><path d="M8 10l12-4 10 3 12-4 14 3 2 12-3 12 4 12-3 12-12 2-12-3-12 4-12-3-2-12 3-12-4-12z" fill="#FFFDF7"/></svg>
+        </a>
+        <a href="EditorStickers.dc.html" aria-label="Notebook page" style="height: 96px; border-radius: 14px; background: #3A3A42; display: flex; align-items: center; justify-content: center">
+          <svg viewBox="0 0 64 64" aria-hidden="true" style="width: 64px; height: 64px"><path d="M10 10l4 2 4-2 4 2 4-2 4 2 4-2 4 2 4-2 4 2 4-2 4 2v46H10z" fill="#FFFFFF"/><path d="M10 22h44M10 30h44M10 38h44M10 46h44" stroke="#9CC3E6" stroke-width="1"/><path d="M18 10v48" stroke="#E57373" stroke-width="1.2"/></svg>
+        </a>
+        <a href="EditorStickers.dc.html" aria-label="Instant photo frame" style="height: 96px; border-radius: 14px; background: #3A3A42; display: flex; align-items: center; justify-content: center">
+          <svg viewBox="0 0 64 64" aria-hidden="true" style="width: 64px; height: 64px"><rect x="12" y="6" width="40" height="52" rx="1" fill="#FFFFFF"/><rect x="16" y="10" width="32" height="34" fill="#55606E"/></svg>
+        </a>
+        <a href="EditorStickers.dc.html" aria-label="Ticket stub" style="height: 96px; border-radius: 14px; background: #3A3A42; display: flex; align-items: center; justify-content: center">
+          <svg viewBox="0 0 64 64" aria-hidden="true" style="width: 64px; height: 64px"><path d="M6 20h52v8a4 4 0 0 0 0 8v8H6v-8a4 4 0 0 0 0-8z" fill="#F5C451" stroke="#141414" stroke-width="1.5"/><path d="M44 21v22" stroke="#141414" stroke-width="1.5" stroke-dasharray="2 2"/><path d="M12 28h24M12 34h16" stroke="#8A6A1E" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <a href="EditorStickers.dc.html" aria-label="Sticky note" style="height: 96px; border-radius: 14px; background: #3A3A42; display: flex; align-items: center; justify-content: center">
+          <svg viewBox="0 0 64 64" aria-hidden="true" style="width: 64px; height: 64px"><path d="M10 10h44v32L42 54H10z" fill="#FFE98A" transform="rotate(4 32 32)"/><path d="M54 42H42v12z" fill="#E6CC5C" transform="rotate(4 32 32)"/></svg>
+        </a>
+        <a href="EditorStickers.dc.html" aria-label="Kraft tag" style="height: 96px; border-radius: 14px; background: #3A3A42; display: flex; align-items: center; justify-content: center">
+          <svg viewBox="0 0 64 64" aria-hidden="true" style="width: 64px; height: 64px"><path d="M22 14h32v36H22L10 32z" fill="#C9A27A" stroke="#8A6A4A" stroke-width="1.5" stroke-linejoin="round"/><circle cx="20" cy="32" r="3" fill="#3A3A42"/><path d="M17 32C10 26 6 18 8 8" fill="none" stroke="#FFF8E7" stroke-width="1.5"/></svg>
+        </a>
+      </div>
+      <a href="Edges.dc.html" style="min-height: 48px; padding: 0 16px; border-radius: 14px; background: #26262D; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 500">
+        <span>Want a torn edge on a photo itself?</span>
+        <span style="color: {{accent}}; font-weight: 700">Edges</span>
+      </a>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#D4FF3A","options":["#D4FF3A","#FF7A59","#A78BFA","#5AC8FA"]},"$preview":{"width":360,"height":2400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'stickers', look: 'wash' };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#D4FF3A';
+    const tab = this.state.tab;
+    const seg = (on) => 'height:36px;border-radius:10px;font-size:13px;' + (on ? 'background:#33333B;font-weight:600;color:#F4F4F5' : 'font-weight:500;color:#A1A1AA');
+    const tabs = [['stickers', 'Stickers'], ['tape', 'Tape'], ['paper', 'Paper']].map(([id, label]) => ({
+      label, selected: id === tab ? 'true' : 'false', pick: () => this.setState({ tab: id }), style: seg(id === tab)
+    }));
+    const looks = [['wash', 'Ink + wash'], ['ink', 'Ink'], ['pencil', 'Pencil']].map(([id, label]) => ({
+      label, checked: id === this.state.look ? 'true' : 'false', pick: () => this.setState({ look: id }),
+      style: seg(id === this.state.look) + ';height:32px;padding:0 10px'
+    }));
+    const zig = 'clip-path:polygon(4px 0,116px 0,120px 4px,116px 8px,120px 12px,116px 16px,120px 20px,116px 24px,120px 28px,116px 32px,4px 32px,0 28px,4px 24px,0 20px,4px 16px,0 12px,4px 8px,0 4px)';
+    const T = (label, bg, rot) => ({ label, style: 'display:block;width:120px;height:32px;' + zig + ';transform:rotate(' + rot + 'deg);background:' + bg });
+    const tapes = [
+      T('Masking tape', 'rgba(233,221,181,.92)', -4),
+      T('Pink washi', 'rgba(244,182,194,.88)', 3),
+      T('Mint washi', 'rgba(191,227,208,.9)', -2),
+      T('Clear tape', 'rgba(255,255,255,.32)', 4),
+      T('Candy stripe', 'repeating-linear-gradient(45deg, rgba(255,122,89,.9) 0 6px, rgba(255,248,231,.9) 6px 12px)', -3),
+      T('Polka dot', 'radial-gradient(circle, rgba(255,255,255,.9) 2px, transparent 2.5px) 0 0 / 10px 10px, rgba(46,59,51,.9)', 2),
+      T('Grid washi', 'linear-gradient(rgba(63,78,94,.35) 1px, transparent 1px) 0 0 / 8px 8px, linear-gradient(90deg, rgba(63,78,94,.35) 1px, transparent 1px) 0 0 / 8px 8px, rgba(207,230,242,.9)', -5),
+      T('Kraft tape', 'rgba(201,162,122,.95)', 3)
+    ];
+    return {
+      accent, tabs, looks, tapes,
+      lookClass: 'look-' + this.state.look,
+      isStickers: tab === 'stickers', isTape: tab === 'tape', isPaper: tab === 'paper'
+    };
+  }
+}
+</script>
+</body>
+</html>
