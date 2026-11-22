@@ -68,8 +68,11 @@ fun NewCarouselScreen(onBack: () -> Unit, onCreated: (String) -> Unit) {
             val name = "Carousel " + java.text.SimpleDateFormat("d MMM", java.util.Locale.getDefault()).format(java.util.Date())
             val project = createProject(name, ratio, count, media, blank = media.isEmpty(), id = id)
             AppGraph.repo.save(project)
-            busy = false
-            onCreated(project.id)
+            // navigation must happen on the main thread, whichever thread the import finished on
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                busy = false
+                onCreated(project.id)
+            }
         }
     }
 

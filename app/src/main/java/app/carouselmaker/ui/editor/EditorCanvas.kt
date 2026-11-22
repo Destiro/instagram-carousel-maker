@@ -172,9 +172,11 @@ fun EditorCanvas(
                     val sel0 = vm.item(vm.selectedId)
                     if (sel0 != null) {
                         val fr = p0.frameOf(sel0, extras)
+                        // nearest handle wins, so side handles stay reachable on short items
+                        var best = handleR
                         for (hk in handlesFor(sel0)) {
-                            val sp = handleScreenPos(vm, sel0, fr, hk, density)
-                            if ((sp - down.position).getDistance() <= handleR) { handle = hk; break }
+                            val d = (handleScreenPos(vm, sel0, fr, hk, density) - down.position).getDistance()
+                            if (d <= best) { best = d; handle = hk }
                         }
                     }
                     val hit = if (handle == null) hitItem(p0, vm.toCanvas(down.position)) else null

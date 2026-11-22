@@ -28,7 +28,10 @@ class MediaImporter(private val context: Context, private val repo: ProjectRepos
     }
 
     private fun importOne(projectId: String, uri: Uri): ImportedMedia? {
-        val type = context.contentResolver.getType(uri) ?: ""
+        val type = context.contentResolver.getType(uri)
+            ?: android.webkit.MimeTypeMap.getSingleton()
+                .getMimeTypeFromExtension(android.webkit.MimeTypeMap.getFileExtensionFromUrl(uri.toString()))
+            ?: ""
         return if (type.startsWith("video")) importVideo(projectId, uri) else importPhoto(projectId, uri)
     }
 
