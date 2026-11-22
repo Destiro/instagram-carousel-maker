@@ -4,25 +4,40 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.background
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import app.carouselmaker.ui.editor.EditorScreen
+import app.carouselmaker.ui.home.HomeScreen
+import app.carouselmaker.ui.home.NewCarouselScreen
 import app.carouselmaker.ui.theme.CarouselTheme
-import app.carouselmaker.ui.theme.Palette
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            CarouselTheme {
-                Box(Modifier.fillMaxSize().background(Palette.Bg).systemBarsPadding()) {
-                    Text("Carousel Maker")
-                }
-            }
+        setContent { CarouselTheme { AppNav() } }
+    }
+}
+
+@Composable
+private fun AppNav() {
+    val nav = rememberNavController()
+    NavHost(nav, startDestination = "home") {
+        composable("home") {
+            HomeScreen(onNew = { nav.navigate("new") }, onOpen = { nav.navigate("editor/$it") })
+        }
+        composable("new") {
+            NewCarouselScreen(
+                onBack = { nav.popBackStack() },
+                onCreated = { id -> nav.navigate("editor/$id") { popUpTo("home") } },
+            )
+        }
+        composable("editor/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) {
+            EditorScreen(it.arguments!!.getString("id")!!, onBack = { nav.popBackStack() })
         }
     }
 }
