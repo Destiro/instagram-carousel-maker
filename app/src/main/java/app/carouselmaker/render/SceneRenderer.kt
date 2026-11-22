@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.ImageBitmap
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -115,7 +117,15 @@ private fun DrawScope.drawMedia(ctx: RenderCtx, item: Item, rect: Rect) {
             .map { Rect(it - block.margin, rect.top - 1f, it + block.margin, rect.bottom + 1f) }
     } else emptyList()
 
-    val clip = itemClipPath(ctx, item, rect)
+    val edge = item.edge
+    val clip = if (edge.isShape()) edgePath(rect, edge) else itemClipPath(ctx, item, rect)
+    if (edge.isShape() && edge.rim && (edge.type == EdgeType.TORN || edge.type == EdgeType.DECKLE)) {
+        val rim = rimPath(rect, edge)
+        translate(0f, 4f) { drawPath(rim, Color(0x45000000)) }
+        drawPath(rim, Color(0xFFFFFDF7))
+    }
+    val fade = edge.isFade()
+    if (fade) drawContext.canvas.saveLayer(rect, androidx.compose.ui.graphics.Paint())
     clipPath(clip) {
         fun body() {
             if (img != null) {
@@ -134,6 +144,17 @@ private fun DrawScope.drawMedia(ctx: RenderCtx, item: Item, rect: Rect) {
             }
             nest(0)
         }
+    }
+    if (fade) {
+        val band = minOf(rect.width, rect.height) * 0.3f
+        val keep = Color.Black
+        val clear = Color.Transparent
+        val dstIn = androidx.compose.ui.graphics.BlendMode.DstIn
+        if (edge.left) drawRect(Brush.horizontalGradient(listOf(clear, keep), rect.left, rect.left + band), rect.topLeft, Size(band, rect.height), blendMode = dstIn)
+        if (edge.right) drawRect(Brush.horizontalGradient(listOf(keep, clear), rect.right - band, rect.right), Offset(rect.right - band, rect.top), Size(band, rect.height), blendMode = dstIn)
+        if (edge.top) drawRect(Brush.verticalGradient(listOf(clear, keep), rect.top, rect.top + band), rect.topLeft, Size(rect.width, band), blendMode = dstIn)
+        if (edge.bottom) drawRect(Brush.verticalGradient(listOf(keep, clear), rect.bottom - band, rect.bottom), Offset(rect.left, rect.bottom - band), Size(rect.width, band), blendMode = dstIn)
+        drawContext.canvas.restore()
     }
     if (ctx.editing && item.type == ItemType.VIDEO) drawPlayBadge(rect)
 }
