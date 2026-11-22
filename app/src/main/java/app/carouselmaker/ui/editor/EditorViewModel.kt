@@ -232,21 +232,6 @@ class EditorViewModel(val projectId: String) : ViewModel() {
     }
 
     fun addSlide(after: Int) = commit { p ->
-        val s = (after + 1).coerceIn(0, p.slideCount)
-        shiftSlides(p, s, +1).let { q ->
-            q.copy(slides = q.slides.toMutableList().apply { add(s, Slide(p.slides.getOrNull(after)?.background ?: Slide().background)) })
-        }
-    }
-
-    /** Move everything at or after slide [from] by [delta] slides (used when inserting). */
-    private fun shiftSlides(p: Project, from: Int, delta: Int): Project {
-        val dx = delta * SLIDE_W
-        val thresh = from * SLIDE_W
-        return p.copy(
-            blocks = p.blocks.map { if (it.start >= from) it.copy(start = it.start + delta) else it },
-            items = p.items.map {
-                if (it.blockId == null && it.x + it.w / 2 >= thresh) it.copy(x = it.x + dx, seam = if (it.seam >= from) it.seam + delta else it.seam) else it
-            },
-        )
+        if (p.slideCount >= 20) p else insertSlide(p, (after + 1).coerceIn(0, p.slideCount), p.slides.getOrNull(after)?.background ?: Slide().background)
     }
 }

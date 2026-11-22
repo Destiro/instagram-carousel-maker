@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.Crop
+import androidx.compose.material.icons.filled.ViewCarousel
 import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EmojiEmotions
@@ -224,6 +225,7 @@ private fun MainBar(onMedia: () -> Unit, onPanel: (Panel) -> Unit, onText: () ->
         ToolButton(Icons.Filled.Tune, "Spacing") { onPanel(Panel.SPACING) }
         ToolButton(Icons.Filled.EmojiEmotions, "Stickers") { onPanel(Panel.STICKERS) }
         ToolButton(Icons.Filled.ContentCut, "Transitions") { onPanel(Panel.SEAMS) }
+        ToolButton(Icons.Filled.ViewCarousel, "Slides") { onPanel(Panel.SLIDES) }
     }
 }
 
@@ -302,6 +304,7 @@ private fun PanelHost(vm: EditorViewModel, panel: Panel, onClose: () -> Unit) {
         Panel.STICKERS -> StickerPanel(vm, onClose)
         Panel.TEXT -> TextPanel(vm, onClose)
         Panel.EDGES -> EdgesPanel(vm, 0, onClose)
+        Panel.SLIDES -> SlidesPanel(vm, onClose)
         Panel.SEAMS -> EdgesPanel(vm, 1, onClose)
         else -> onClose()
     }
