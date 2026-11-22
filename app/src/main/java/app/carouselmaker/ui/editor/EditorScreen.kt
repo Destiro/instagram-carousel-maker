@@ -33,6 +33,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Flip
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.SwapHoriz
@@ -67,9 +69,6 @@ import app.carouselmaker.ui.common.IconBtn
 import app.carouselmaker.ui.theme.Palette
 import kotlinx.coroutines.launch
 
-/** Which bottom panel is open (null = tool bar). */
-enum class Panel { NONE }
-
 @Composable
 fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Unit = {}) {
     val vm: EditorViewModel = viewModel(key = projectId, factory = viewModelFactory { initializer { EditorViewModel(projectId) } })
@@ -77,6 +76,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
     var busy by remember { mutableStateOf(false) }
     var pendingCell by remember { mutableStateOf<String?>(null) }
     var replacing by remember { mutableStateOf<String?>(null) }
+    var panel by remember { mutableStateOf(Panel.NONE) }
 
     val addPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(40)) { uris ->
         if (uris.isNotEmpty()) scope.launch {
@@ -125,7 +125,9 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
         if (project != null) {
             SlideStrip(vm, project)
             val sel = vm.item(vm.selectedId)
-            if (sel != null) {
+            if (panel != Panel.NONE) {
+                PanelHost(vm, panel) { panel = Panel.NONE }
+            } else if (sel != null) {
                 ItemBar(vm, sel,
                     onReplace = {
                         replacing = sel.id
@@ -134,6 +136,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
             } else {
                 MainBar(
                     onMedia = { addPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)) },
+                    onPanel = { panel = it },
                 )
             }
         }
@@ -189,12 +192,14 @@ private fun SlideStrip(vm: EditorViewModel, project: Project) {
 }
 
 @Composable
-private fun MainBar(onMedia: () -> Unit) {
+private fun MainBar(onMedia: () -> Unit, onPanel: (Panel) -> Unit) {
     Row(
         Modifier.fillMaxWidth().height(76.dp).background(Palette.Bar).horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically,
     ) {
         ToolButton(Icons.Filled.AddPhotoAlternate, "Media", onClick = onMedia)
+        ToolButton(Icons.Filled.GridView, "Layout") { onPanel(Panel.LAYOUTS) }
+        ToolButton(Icons.Filled.Tune, "Spacing") { onPanel(Panel.SPACING) }
     }
 }
 
@@ -238,5 +243,14 @@ private fun ItemBar(vm: EditorViewModel, item: Item, onReplace: () -> Unit) {
             ToolButton(Icons.Filled.ContentCopy, "Duplicate") { vm.duplicateSelected() }
             ToolButton(Icons.Filled.Delete, "Delete", tint = Palette.Danger) { vm.deleteSelected() }
         }
+    }
+}
+
+@Composable
+private fun PanelHost(vm: EditorViewModel, panel: Panel, onClose: () -> Unit) {
+    when (panel) {
+        Panel.LAYOUTS -> LayoutsPanel(vm, onClose)
+        Panel.SPACING -> SpacingPanel(vm, onClose)
+        else -> onClose()
     }
 }
