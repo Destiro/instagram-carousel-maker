@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.GridView
@@ -77,6 +78,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
     var pendingCell by remember { mutableStateOf<String?>(null) }
     var replacing by remember { mutableStateOf<String?>(null) }
     var panel by remember { mutableStateOf(Panel.NONE) }
+    var cropping by remember { mutableStateOf<String?>(null) }
 
     val addPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(40)) { uris ->
         if (uris.isNotEmpty()) scope.launch {
@@ -107,6 +109,11 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
     }
 
     val project = vm.project
+    val cropId = cropping
+    if (cropId != null) {
+        CropOverlay(vm, cropId) { cropping = null }
+        return
+    }
     Column(Modifier.fillMaxSize().background(Palette.Bg).systemBarsPadding()) {
         TopBar(vm, onBack) { vm.saveNow(); onExport(projectId) }
         Box(Modifier.weight(1f).fillMaxWidth().background(Palette.Bg2)) {
@@ -129,6 +136,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
                 PanelHost(vm, panel) { panel = Panel.NONE }
             } else if (sel != null) {
                 ItemBar(vm, sel,
+                    onCrop = { cropping = sel.id },
                     onReplace = {
                         replacing = sel.id
                         onePicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
@@ -215,7 +223,7 @@ fun ToolButton(icon: ImageVector, label: String, tint: Color = Color(0xFFD4D4D8)
 }
 
 @Composable
-private fun ItemBar(vm: EditorViewModel, item: Item, onReplace: () -> Unit) {
+private fun ItemBar(vm: EditorViewModel, item: Item, onCrop: () -> Unit, onReplace: () -> Unit) {
     val title = when (item.type) {
         ItemType.PHOTO -> if (item.media == null) "Empty cell" else "Photo"
         ItemType.VIDEO -> "Video"
@@ -236,6 +244,7 @@ private fun ItemBar(vm: EditorViewModel, item: Item, onReplace: () -> Unit) {
             }
         }
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            if (item.type == ItemType.PHOTO && item.media != null) ToolButton(Icons.Filled.Crop, "Crop", onClick = onCrop)
             if (item.type == ItemType.PHOTO || item.type == ItemType.VIDEO) ToolButton(Icons.Filled.SwapHoriz, "Replace", onClick = onReplace)
             ToolButton(Icons.Filled.Flip, "Flip") { vm.flipSelected() }
             ToolButton(Icons.Filled.Layers, "Front") { vm.bringToFront() }

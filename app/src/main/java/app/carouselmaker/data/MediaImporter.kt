@@ -68,6 +68,21 @@ class MediaImporter(private val context: Context, private val repo: ProjectRepos
         runCatching { importPhoto(projectId, uri, keepAlpha = true) }.getOrNull()
     }
 
+    /** Rotate a photo 90 degrees clockwise into a new file. */
+    suspend fun rotate90(projectId: String, name: String): ImportedMedia? = withContext(Dispatchers.IO) {
+        runCatching {
+            val src = BitmapFactory.decodeFile(repo.mediaFile(projectId, name).absolutePath) ?: return@runCatching null
+            val m = Matrix().apply { postRotate(90f) }
+            val out = Bitmap.createBitmap(src, 0, 0, src.width, src.height, m, true)
+            val png = name.endsWith(".png")
+            val newName = newId() + if (png) ".png" else ".jpg"
+            FileOutputStream(repo.mediaFile(projectId, newName)).use {
+                if (png) out.compress(Bitmap.CompressFormat.PNG, 100, it) else out.compress(Bitmap.CompressFormat.JPEG, 92, it)
+            }
+            ImportedMedia(newName, out.width, out.height, false)
+        }.getOrNull()
+    }
+
     private fun importVideo(projectId: String, uri: Uri): ImportedMedia? {
         val name = newId() + ".mp4"
         val dst = repo.mediaFile(projectId, name)
