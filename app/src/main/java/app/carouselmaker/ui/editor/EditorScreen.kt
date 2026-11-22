@@ -42,6 +42,8 @@ import androidx.compose.material.icons.filled.FilterNone
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Flip
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.SwapHoriz
@@ -142,6 +144,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
                 PanelHost(vm, panel) { panel = Panel.NONE }
             } else if (sel != null) {
                 ItemBar(vm, sel,
+                    onEditText = { panel = Panel.TEXT },
                     onCrop = { cropping = sel.id },
                     onReplace = {
                         replacing = sel.id
@@ -151,6 +154,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
                 MainBar(
                     onMedia = { addPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)) },
                     onPanel = { panel = it },
+                    onText = { vm.addAtCenter(newTextItem()); panel = Panel.TEXT },
                 )
             }
         }
@@ -206,12 +210,13 @@ private fun SlideStrip(vm: EditorViewModel, project: Project) {
 }
 
 @Composable
-private fun MainBar(onMedia: () -> Unit, onPanel: (Panel) -> Unit) {
+private fun MainBar(onMedia: () -> Unit, onPanel: (Panel) -> Unit, onText: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().height(76.dp).background(Palette.Bar).horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.CenterVertically,
     ) {
         ToolButton(Icons.Filled.AddPhotoAlternate, "Media", onClick = onMedia)
+        ToolButton(Icons.Filled.TextFields, "Text", onClick = onText)
         ToolButton(Icons.Filled.GridView, "Layout") { onPanel(Panel.LAYOUTS) }
         ToolButton(Icons.Filled.Tune, "Spacing") { onPanel(Panel.SPACING) }
         ToolButton(Icons.Filled.EmojiEmotions, "Stickers") { onPanel(Panel.STICKERS) }
@@ -230,7 +235,7 @@ fun ToolButton(icon: ImageVector, label: String, tint: Color = Color(0xFFD4D4D8)
 }
 
 @Composable
-private fun ItemBar(vm: EditorViewModel, item: Item, onCrop: () -> Unit, onReplace: () -> Unit) {
+private fun ItemBar(vm: EditorViewModel, item: Item, onEditText: () -> Unit, onCrop: () -> Unit, onReplace: () -> Unit) {
     val title = when (item.type) {
         ItemType.PHOTO -> if (item.media == null) "Empty cell" else "Photo"
         ItemType.VIDEO -> "Video"
@@ -253,6 +258,7 @@ private fun ItemBar(vm: EditorViewModel, item: Item, onCrop: () -> Unit, onRepla
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
             if (item.type == ItemType.PHOTO && item.media != null) ToolButton(Icons.Filled.Crop, "Crop", onClick = onCrop)
             if (item.type == ItemType.PHOTO || item.type == ItemType.VIDEO) ToolButton(Icons.Filled.SwapHoriz, "Replace", onClick = onReplace)
+            if (item.type == ItemType.TEXT) ToolButton(Icons.Filled.Edit, "Edit", onClick = onEditText)
             if (item.type == ItemType.STICKER) {
                 ToolButton(Icons.Filled.CropSquare, "Outline", tint = if (item.outline) Palette.Accent else Color(0xFFD4D4D8)) { vm.mutate(item.id) { it.copy(outline = !it.outline) } }
                 ToolButton(Icons.Filled.FilterNone, "Shadow", tint = if (item.shadow) Palette.Accent else Color(0xFFD4D4D8)) { vm.mutate(item.id) { it.copy(shadow = !it.shadow) } }
@@ -289,6 +295,7 @@ private fun PanelHost(vm: EditorViewModel, panel: Panel, onClose: () -> Unit) {
         Panel.LAYOUTS -> LayoutsPanel(vm, onClose)
         Panel.SPACING -> SpacingPanel(vm, onClose)
         Panel.STICKERS -> StickerPanel(vm, onClose)
+        Panel.TEXT -> TextPanel(vm, onClose)
         else -> onClose()
     }
 }
