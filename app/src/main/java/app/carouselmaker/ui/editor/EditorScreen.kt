@@ -31,7 +31,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.Crop
+import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.FileDownload
@@ -145,6 +147,7 @@ fun EditorScreen(projectId: String, onBack: () -> Unit, onExport: (String) -> Un
             } else if (sel != null) {
                 ItemBar(vm, sel,
                     onEditText = { panel = Panel.TEXT },
+                    onEdges = { panel = Panel.EDGES },
                     onCrop = { cropping = sel.id },
                     onReplace = {
                         replacing = sel.id
@@ -220,6 +223,7 @@ private fun MainBar(onMedia: () -> Unit, onPanel: (Panel) -> Unit, onText: () ->
         ToolButton(Icons.Filled.GridView, "Layout") { onPanel(Panel.LAYOUTS) }
         ToolButton(Icons.Filled.Tune, "Spacing") { onPanel(Panel.SPACING) }
         ToolButton(Icons.Filled.EmojiEmotions, "Stickers") { onPanel(Panel.STICKERS) }
+        ToolButton(Icons.Filled.ContentCut, "Transitions") { onPanel(Panel.SEAMS) }
     }
 }
 
@@ -235,7 +239,7 @@ fun ToolButton(icon: ImageVector, label: String, tint: Color = Color(0xFFD4D4D8)
 }
 
 @Composable
-private fun ItemBar(vm: EditorViewModel, item: Item, onEditText: () -> Unit, onCrop: () -> Unit, onReplace: () -> Unit) {
+private fun ItemBar(vm: EditorViewModel, item: Item, onEditText: () -> Unit, onEdges: () -> Unit, onCrop: () -> Unit, onReplace: () -> Unit) {
     val title = when (item.type) {
         ItemType.PHOTO -> if (item.media == null) "Empty cell" else "Photo"
         ItemType.VIDEO -> "Video"
@@ -256,6 +260,7 @@ private fun ItemBar(vm: EditorViewModel, item: Item, onEditText: () -> Unit, onC
             }
         }
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            if ((item.type == ItemType.PHOTO || item.type == ItemType.VIDEO) && item.media != null) ToolButton(Icons.Filled.AutoFixHigh, "Edges", onClick = onEdges)
             if (item.type == ItemType.PHOTO && item.media != null) ToolButton(Icons.Filled.Crop, "Crop", onClick = onCrop)
             if (item.type == ItemType.PHOTO || item.type == ItemType.VIDEO) ToolButton(Icons.Filled.SwapHoriz, "Replace", onClick = onReplace)
             if (item.type == ItemType.TEXT) ToolButton(Icons.Filled.Edit, "Edit", onClick = onEditText)
@@ -296,6 +301,8 @@ private fun PanelHost(vm: EditorViewModel, panel: Panel, onClose: () -> Unit) {
         Panel.SPACING -> SpacingPanel(vm, onClose)
         Panel.STICKERS -> StickerPanel(vm, onClose)
         Panel.TEXT -> TextPanel(vm, onClose)
+        Panel.EDGES -> EdgesPanel(vm, 0, onClose)
+        Panel.SEAMS -> EdgesPanel(vm, 1, onClose)
         else -> onClose()
     }
 }
